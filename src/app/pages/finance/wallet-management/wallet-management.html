@@ -1,0 +1,77 @@
+<div class="flex-1 p-6 space-y-6">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Gestion des Portefeuilles (Wallets)</h1>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <app-kapi-card title="Masse en circulation" [value]="stats().totalCirculating.value" icon="currency_exchange" accentColor="text-primary"></app-kapi-card>
+        <app-kapi-card title="Comptes Gelés" [value]="stats().frozenWallets.value" icon="block" accentColor="text-red-500"></app-kapi-card>
+        <app-kapi-card title="Recettes (Frais)" [value]="stats().totalFees.value" icon="account_balance" accentColor="text-amber-500"></app-kapi-card>
+    </div>
+
+    <div class="bg-surface-light p-4 rounded-xl border border-border-light flex gap-4 items-center">
+        <div class="relative flex-1">
+            <span class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+            <input type="text" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" placeholder="Rechercher un utilisateur par nom ou email..." class="w-full pl-10 pr-4 py-2 bg-background-light border border-border-light rounded-lg outline-none">
+        </div>
+    </div>
+
+    <div class="bg-surface-light rounded-xl border border-border-light shadow-sm">
+        <app-data-table [columns]="columns" [data]="filteredWallets()" [actions]="actions"></app-data-table>
+    </div>
+</div>
+
+@if (selectedWallet()) {
+  <div class="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-sm">
+    <div class="w-full max-w-md overflow-y-auto  h-full bg-surface-light dark:bg-surface-dark shadow-2xl animate-slide-in-right flex flex-col">
+      <div class="p-6 border-b flex justify-between items-center bg-gray-50">
+        <h2 class="text-xl font-bold">Options du Portefeuille</h2>
+        <button (click)="selectedWallet.set(null)" class="p-2 hover:bg-gray-200 rounded-full"><span class="material-icons-outlined">close</span></button>
+      </div>
+
+      <div class="flex-1 p-8 space-y-8">
+        <div class="text-center">
+            <div class="w-20 h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="material-icons-outlined text-4xl">account_circle</span>
+            </div>
+            <h3 class="text-xl font-bold">{{selectedWallet().user}}</h3>
+            <p class="text-sm text-gray-400">{{selectedWallet().email}}</p>
+            <div [class]="'mt-2 inline-block px-3 py-1 rounded-full text-xs font-bold ' + getStatusClass(selectedWallet().status)">
+                {{selectedWallet().status}}
+            </div>
+        </div>
+
+        <div class="bg-background-light p-6 rounded-2xl border-2 border-primary/20 text-center">
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Solde Actuel</p>
+            <div class="text-4xl font-black text-primary">{{selectedWallet().balance}} U</div>
+        </div>
+
+        <div class="space-y-3">
+            <button (click)="toggleFreeze(selectedWallet())" 
+                    [class]="selectedWallet().isFrozen ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-red-50 text-red-600 border-red-200'"
+                    class="w-full flex items-center justify-between p-4 border rounded-xl font-bold transition-all hover:scale-[1.02]">
+                <span>{{selectedWallet().isFrozen ? 'Autoriser les transactions' : 'Geler les fonds immédiatement'}}</span>
+                <span class="material-icons-outlined">{{selectedWallet().isFrozen ? 'lock_open' : 'lock'}}</span>
+            </button>
+            
+            <button class="w-full flex items-center justify-between p-4 border border-gray-200 rounded-xl font-bold hover:bg-gray-50 transition-all">
+                <span>Ajuster le solde (Correction)</span>
+                <span class="material-icons-outlined">edit</span>
+            </button>
+
+            <button class="w-full flex items-center justify-between p-4 border border-gray-200 rounded-xl font-bold hover:bg-gray-50 transition-all">
+                <span>Historique propre au wallet</span>
+                <span class="material-icons-outlined">history</span>
+            </button>
+        </div>
+
+        @if(selectedWallet().isFrozen) {
+            <div class="p-4 bg-red-600 text-white rounded-xl flex gap-3 shadow-lg shadow-red-600/20">
+                <span class="material-icons-outlined">warning</span>
+                <p class="text-xs font-medium">Ce compte est actuellement sous investigation. Toutes les sorties d'argent (Retraits/Paiements) sont bloquées.</p>
+            </div>
+        }
+      </div>
+    </div>
+  </div>
+}

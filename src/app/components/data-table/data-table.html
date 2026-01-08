@@ -1,0 +1,107 @@
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark overflow-visible shadow-sm">
+  <!-- Barre de recherche -->
+  <div class="p-4 border-b border-border-light dark:border-border-dark flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="relative max-w-sm w-full">
+      <span class="material-icons-outlined absolute left-3 top-2.5 text-text-muted-light text-sm">search</span>
+      <input 
+        type="text" 
+        (input)="updateSearch($event)"
+        placeholder="Rechercher dans le tableau..." 
+        class="pl-10 pr-4 py-2 w-full text-sm rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+      />
+    </div>
+  </div>
+
+  <!-- Tableau -->
+  <div class="min-w-full inline-block align-middle overflow-visible">
+    <table class="w-full text-left">
+      <thead class="bg-gray-50 dark:bg-gray-800/50 text-xs uppercase text-text-muted-light">
+        <tr>
+          @for (col of columns(); track col.key) {
+            <th class="px-6 py-4">{{ col.label }}</th>
+          }
+          @if (actions().length > 0) { <th class="px-6 py-4 text-right">Actions</th> }
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-border-light dark:divide-border-dark">
+        @for (row of paginatedData(); track row.id) {
+          <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-700/20">
+            @for (col of columns(); track col.key) {
+              <td class="px-6 py-4">
+                @switch (col.type) {
+                  @case ('image') {
+                    <img [src]="row[col.key]" class="h-10 w-10 rounded-full object-cover border border-border-light shadow-sm" alt="avatar">
+                  }
+                  @case ('badge') {
+                    <span [class]="'px-2.5 py-0.5 rounded-full text-xs font-semibold ' + getBadgeClass(row[col.key])">
+                      {{ row[col.key] }}
+                    </span>
+                  }
+                  @case ('currency') {
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold">
+                      {{ row[col.key] | currency:'XAF':'symbol':'1.0-0':'fr' }}
+                    </span>
+                  }
+                  @case ('date') {
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold">
+                      {{ row[col.key] | date:'EEEE, d MMMM y' }}
+                    </span>
+                  }
+                  @default {
+                    <span class="text-sm text-text-light dark:text-text-dark">{{ row[col.key] }}</span>
+                  }
+                }
+              </td>
+            }
+
+            @if (actions().length > 0) {
+              <td class="px-6 py-4 text-right relative">
+                <button (click)="toggleDropdown(row.id, $event)" class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                  <span class="material-icons-outlined">more_vert</span>
+                </button>
+
+                @if (openDropdownId() === row.id) {
+                  <div class="absolute right-6 top-12 w-48 bg-white dark:bg-gray-800 rounded-md shadow-xl border border-border-light dark:border-border-dark z-50 py-1">
+                    @for (action of actions(); track action.label) {
+                      <button 
+                        (click)="action.callback(row); openDropdownId.set(null)"
+                        [class]="'w-full text-left px-4 py-2 text-sm flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 ' + (action.color || 'text-text-light dark:text-text-dark')"
+                      >
+                        <span class="material-icons-outlined text-base">{{ action.icon }}</span>
+                        {{ action.label }}
+                      </button>
+                    }
+                  </div>
+                  <div (click)="openDropdownId.set(null)" class="fixed inset-0 z-40"></div>
+                }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="totalPages() > 1" class="flex items-center justify-between px-6 py-4 border-t border-border-light dark:border-border-dark">
+    <button 
+      (click)="prevPage()" 
+      [disabled]="currentPage() === 1"
+      class="px-3 py-1 text-sm rounded-md border border-border-light dark:border-border-dark bg-gray-100 dark:bg-gray-700 disabled:opacity-50"
+    >
+      Précédent
+    </button>
+
+    <span class="text-sm text-text-light dark:text-text-dark">
+      Page {{ currentPage() }} / {{ totalPages() }}
+    </span>
+
+    <button 
+      (click)="nextPage()" 
+      [disabled]="currentPage() === totalPages()"
+      class="px-3 py-1 text-sm rounded-md border border-border-light dark:border-border-dark bg-gray-100 dark:bg-gray-700 disabled:opacity-50"
+    >
+      Suivant
+    </button>
+  </div>
+</div>

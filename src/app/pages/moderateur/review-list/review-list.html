@@ -1,0 +1,66 @@
+<div class="p-6 space-y-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
+  
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-gray-200 dark:border-gray-700">
+    <div class="pb-4">
+      <h1 class="text-2xl font-black text-gray-800 dark:text-white uppercase tracking-tighter">Gestion des Avis & Litiges</h1>
+      <p class="text-gray-500 text-sm">Contrôle de la qualité des retours clients et modération des comportements vendeurs.</p>
+    </div>
+    
+    <div class="flex gap-2 bg-gray-200/50 dark:bg-gray-800 p-1.5 rounded-t-2xl">
+      <button (click)="activeTab.set('product-reports')" 
+        [class]="activeTab() === 'product-reports' ? 'bg-white dark:bg-gray-700 shadow-sm text-primary' : 'text-gray-500'"
+        class="px-6 py-2.5 rounded-xl font-black uppercase text-[10px] tracking-widest transition-all">
+        Avis & Produits Signalés
+      </button>
+      <button (click)="activeTab.set('vendor-strikes')" 
+        [class]="activeTab() === 'vendor-strikes' ? 'bg-white dark:bg-gray-700 shadow-sm text-primary' : 'text-gray-500'"
+        class="px-6 py-2.5 rounded-xl font-black uppercase text-[10px] tracking-widest transition-all">
+        Boutiques sous Surveillance
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    @if (activeTab() === 'product-reports') {
+      <app-kapi-card title="Avis Litigieux" [value]="productReports().length" icon="flag" accentColor="text-red-500" [stat]="{label:'À traiter d\'urgence', value:'', isPositive:false}"></app-kapi-card>
+      <app-kapi-card title="Note Moyenne" value="3.8/5" icon="star_half" accentColor="text-yellow-500" [stat]="{label:'Stable', value:'', isPositive:true}"></app-kapi-card>
+      <app-kapi-card title="Signalements Classés" value="240" icon="verified" accentColor="text-green-600" [stat]="{label:'Cette semaine', value:'', isPositive:true}"></app-kapi-card>
+    } @else {
+      <app-kapi-card title="Boutiques Signalées" [value]="vendorAlerts().length" icon="report_problem" accentColor="text-orange-600"></app-kapi-card>
+      <app-kapi-card title="Total Strikes" value="14" icon="gavel" accentColor="text-red-600"></app-kapi-card>
+      <app-kapi-card title="Comptes Suspendus" value="3" icon="lock" accentColor="text-gray-800"></app-kapi-card>
+    }
+  </div>
+
+  <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden relative">
+    <div class="p-4 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-white/50 dark:bg-gray-800/50">
+       <span class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Journal de modération</span>
+       <button (click)="refreshData()" class="text-primary text-xs font-bold hover:underline">Rafraîchir les alertes</button>
+    </div>
+
+    <div class="relative">
+      @if (isLoading()) {
+        <div class="absolute inset-0 bg-white/60 dark:bg-gray-800/60 backdrop-blur-[2px] z-20 flex items-center justify-center">
+          <div class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      }
+
+      <app-data-table 
+        [columns]="columns()" 
+        [data]="activeTab() === 'product-reports' ? productReports() : vendorAlerts()" 
+        [actions]="actions()"
+        [itemsPerPage]="10">
+      </app-data-table>
+
+      @if (!isLoading() && (activeTab() === 'product-reports' ? productReports().length : vendorAlerts().length) === 0) {
+        <div class="p-24 text-center">
+          <div class="w-20 h-20 bg-green-50 dark:bg-green-900/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="material-icons text-4xl">check_circle</span>
+          </div>
+          <h3 class="font-black text-gray-800 dark:text-white uppercase text-sm">Aucun litige en attente</h3>
+          <p class="text-gray-500 text-xs mt-1">La plateforme est saine. Tous les signalements ont été traités.</p>
+        </div>
+      }
+    </div>
+  </div>
+</div>

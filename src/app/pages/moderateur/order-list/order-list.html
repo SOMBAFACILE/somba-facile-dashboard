@@ -1,0 +1,46 @@
+<div class="p-6 space-y-6 bg-gray-50 min-h-screen">
+    @if(SelectedOrder() == null) {
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <app-kapi-card *ngFor="let k of kpis" 
+            [title]="k.label" 
+            [value]="k.value" 
+            [icon]="k.icon" 
+            [accentColor]="k.color">
+            </app-kapi-card>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-wrap gap-4 items-end">
+            <div class="flex flex-col gap-1">
+            <label class="text-[10px] font-black uppercase text-gray-400">Rechercher ID</label>
+            <input type="text" placeholder="#ORD-..." class="border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary">
+            </div>
+            <div class="flex flex-col gap-1">
+            <label class="text-[10px] font-black uppercase text-gray-400">Statut Paiement</label>
+            <select class="border rounded-lg px-3 py-2 text-sm outline-none">
+                <option>Tous</option>
+                <option>Confirmé</option>
+                <option>En attente</option>
+                <option>Suspendu</option>
+            </select>
+            </div>
+            <div class="flex flex-col gap-1">
+            <label class="text-[10px] font-black uppercase text-gray-400">Boutique</label>
+            <select class="border rounded-lg px-3 py-2 text-sm outline-none">
+                <option>Toutes les boutiques</option>
+            </select>
+            </div>
+            <button class="bg-primary text-white px-6 py-2 rounded-lg text-sm font-bold ml-auto hover:bg-primary-dark transition-all">
+            Appliquer les filtres
+            </button>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm">
+            <app-data-table 
+            [columns]="orderColumns" 
+            [data]="orders()" 
+            [actions]="orderActions">
+            </app-data-table>
+        </div>
+    }
+    <app-order-detail *ngIf="SelectedOrder()" [order]="SelectedOrder()" (onBack)="SelectedOrder.set(null)"></app-order-detail>
+</div>

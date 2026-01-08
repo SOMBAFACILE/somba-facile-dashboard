@@ -1,0 +1,37 @@
+<div class="p-6 space-y-6">
+  <div class="mb-8">
+    <h2 class="text-2xl font-black text-gray-800 uppercase">Gestion des Versions App</h2>
+    <p class="text-gray-500 font-medium">Contrôlez les versions minimales requises pour le fonctionnement du Mall.</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    @for (p of platforms(); track p.name) {
+      <div class="bg-white p-8 rounded-[35px] border border-gray-100 shadow-sm relative overflow-hidden group">
+        <div class="flex justify-between items-start mb-8">
+          <div class="space-y-1">
+            <h3 class="text-3xl font-black text-gray-800">{{ p.name }}</h3>
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Dernière MAJ : {{ p.lastUpdate }}</p>
+          </div>
+          <span class="material-icons-outlined text-5xl text-gray-100 group-hover:text-primary/20 transition-colors">
+            {{ p.name === 'iOS' ? 'apple' : 'android' }}
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+            <p class="text-[10px] font-black text-gray-400 uppercase mb-1">Version Actuelle</p>
+            <p class="text-xl font-black text-gray-800">{{ p.currentVersion }}</p>
+          </div>
+          <div class="bg-primary/5 p-4 rounded-2xl border border-primary/10">
+            <p class="text-[10px] font-black text-primary uppercase mb-1">Minimum Requis</p>
+            <p class="text-xl font-black text-primary">{{ p.minVersion }}</p>
+          </div>
+        </div>
+        
+        <button class="w-full mt-6 py-4 bg-gray-50 text-gray-900 rounded-2xl font-bold hover:bg-gray-100 transition-all flex items-center justify-center gap-2">
+          <span class="material-icons-outlined text-sm">edit</span> Modifier les seuils
+        </button>
+      </div>
+    }
+  </div>
+</div>

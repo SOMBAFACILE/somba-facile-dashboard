@@ -2,12 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>SombaFacileDashboard</title>
+  <title>Angular 19 Dashboard</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+  
+  <script>
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    primary: "#4F46E5",
+                    "primary-hover": "#4338CA",
+                    "background-light": "#F3F4F6",
+                    "background-dark": "#111827",
+                    "surface-light": "#FFFFFF",
+                    "surface-dark": "#1F2937",
+                    "border-light": "#E5E7EB",
+                    "border-dark": "#374151",
+                    "text-light": "#1F2937",
+                    "text-dark": "#F9FAFB",
+                    "text-muted-light": "#6B7280",
+                    "text-muted-dark": "#9CA3AF",
+                },
+                fontFamily: { sans: ["Inter", "sans-serif"] }
+            },
+        },
+    };
+  </script>
 </head>
-<body>
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark antialiased h-screen  ">
   <app-root></app-root>
 </body>
 </html>

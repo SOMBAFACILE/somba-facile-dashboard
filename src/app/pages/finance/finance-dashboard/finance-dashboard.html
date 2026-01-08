@@ -1,0 +1,45 @@
+<div class="flex-1 overflow-y-auto p-6 space-y-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <app-kapi-card 
+          title="Liquidité Système" 
+          [value]="totalLiquidity().value" 
+          icon="account_balance_wallet" 
+          accentColor="text-blue-600"
+          [stat]="{ value: 'Stable', label: totalLiquidity().label, isPositive: true }">
+        </app-kapi-card>
+
+        <app-kapi-card 
+          title="Retraits en Attente" 
+          [value]="pendingWithdrawals().value" 
+          icon="hourglass_empty" 
+          accentColor="text-orange-500"
+          [stat]="{ value: 'Urgent', label: pendingWithdrawals().label, isPositive: false }">
+        </app-kapi-card>
+
+        <app-kapi-card 
+          title="Commissions Nettes" 
+          [value]="netCommissions().value" 
+          icon="monetization_on" 
+          accentColor="text-green-600"
+          [stat]="{ value: '+18%', label: netCommissions().label, isPositive: true }">
+        </app-kapi-card>
+    </div>
+
+    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-border-light dark:border-border-dark shadow-sm">
+        <h3 class="font-bold text-lg mb-6 text-text-light dark:text-text-dark">Surveillance des Flux (Cash-In vs Cash-Out)</h3>
+        <div class="h-80">
+            <app-base-chart type="line" [data]="cashFlowData()" [options]="chartOptions"></app-base-chart>
+        </div>
+    </div>
+
+    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-border-light dark:border-border-dark">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold">Derniers Mouvements de Fonds</h3>
+            <button class="text-primary text-sm font-medium hover:underline">Voir tout l'audit</button>
+        </div>
+        <app-data-table 
+            [columns]="transactionColumns" 
+            [data]="transactions()">
+        </app-data-table>
+    </div>
+</div>    

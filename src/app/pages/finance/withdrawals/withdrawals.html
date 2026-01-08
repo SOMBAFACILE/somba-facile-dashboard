@@ -1,0 +1,127 @@
+
+
+<div class="flex-1 p-6 space-y-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h1 class="text-2xl font-bold">Gestion des Retraits</h1>
+            <p class="text-text-muted-light">Suivi des décaissements et opérations de guichet physique.</p>
+        </div>
+        <button (click)="showManualWithdrawalForm.set(true)" 
+                class="flex items-center px-5 py-2.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-500/20 font-bold">
+            <span class="material-icons-outlined mr-2">payments</span>
+            Retrait Présentiel
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <app-kapi-card title="En attente" [value]="stats().totalPending.value" icon="hourglass_empty" accentColor="text-amber-500"
+            [stat]="{ value: stats().totalPending.count + '', label: 'demandes', isPositive: false }"></app-kapi-card>
+        <app-kapi-card title="Payés (24h)" [value]="stats().processedToday.value" icon="check_circle" accentColor="text-blue-600"
+            [stat]="{ value: '+15%', label: 'vs hier', isPositive: true }"></app-kapi-card>
+        <app-kapi-card title="Réserve Cash" [value]="stats().availableCash.value" icon="shield" accentColor="text-emerald-600"
+            [stat]="{ value: 'OK', label: 'Liquidité', isPositive: true }"></app-kapi-card>
+    </div>
+
+    <div class="bg-surface-light dark:bg-surface-dark p-4 rounded-xl border border-border-light dark:border-border-dark flex flex-col md:flex-row gap-4 justify-between items-center">
+        <div class="flex bg-background-light dark:bg-background-dark p-1 rounded-lg border border-border-light dark:border-border-dark">
+            <button (click)="currentFilter.set('all')" [class.bg-white]="currentFilter()==='all'" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all">Tous</button>
+            <button (click)="currentFilter.set('pending')" [class.bg-white]="currentFilter()==='pending'" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all text-amber-600">En attente</button>
+            <button (click)="currentFilter.set('completed')" [class.bg-white]="currentFilter()==='completed'" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all text-emerald-600">Terminés</button>
+        </div>
+        <div class="relative w-full md:w-80">
+            <span class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+            <input type="text" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" placeholder="Rechercher boutique, ID..." class="w-full pl-10 pr-4 py-2 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg outline-none focus:ring-2 focus:ring-primary/20">
+        </div>
+    </div>
+
+    <div class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm  ">
+        <app-data-table [columns]="columns" [data]="filteredRequests()" [actions]="actions"></app-data-table>
+    </div>
+</div>
+
+
+@if (showManualWithdrawalForm()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div class="bg-surface-light dark:bg-surface-dark w-full max-w-md rounded-2xl shadow-2xl   animate-in zoom-in duration-200">
+            
+            @if (!isWaitingForUserPin()) {
+                <div class="p-6 border-b flex justify-between items-center bg-emerald-50 dark:bg-emerald-900/10">
+                    <h2 class="text-xl font-bold flex items-center gap-2 text-emerald-600">
+                        <span class="material-icons-outlined">point_of_sale</span> 
+                        Retrait en Espèces
+                    </h2>
+                    <button (click)="showManualWithdrawalForm.set(false)" class="text-gray-400 hover:text-gray-600">
+                        <span class="material-icons-outlined">close</span>
+                    </button>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1 uppercase text-gray-500">Identifiant Client</label>
+                        <input type="text" [(ngModel)]="manualData().userIdentifier" placeholder="Email ou ID" class="w-full px-4 py-2 bg-background-light dark:bg-background-dark border border-border-light rounded-lg outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1 uppercase text-gray-500">Montant (U)</label>
+                        <input type="number" [(ngModel)]="manualData().amount" class="w-full px-4 py-3 text-3xl font-black bg-background-light dark:bg-background-dark border border-border-light rounded-lg text-emerald-600 outline-none">
+                    </div>
+                    <button (click)="handleManualWithdrawal()" class="w-full py-4 bg-emerald-600 text-white rounded-xl font-bold shadow-lg shadow-emerald-500/20 mt-4 hover:bg-emerald-700">
+                        Initier la demande PIN
+                    </button>
+                </div>
+            } @else {
+                <div class="p-10 text-center space-y-6">
+                    <div class="relative inline-block">
+                        <div class="w-24 h-24 border-4 border-emerald-100 border-t-emerald-600 rounded-full animate-spin"></div>
+                        <span class="material-icons-outlined absolute inset-0 flex items-center justify-center text-3xl text-emerald-600">smartphone</span>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xl font-bold">En attente du client...</h3>
+                        <p class="text-text-muted-light text-sm px-4">L'utilisateur doit saisir son code PIN sur son application Mall Center pour valider les {{manualData().amount}} U.</p>
+                    </div>
+
+                    <div class="bg-gray-100 dark:bg-gray-800 rounded-full h-2 w-full  ">
+                        <div class="bg-emerald-500 h-full transition-all duration-1000" [style.width.%]="(pinValidationTimer() / 60) * 100"></div>
+                    </div>
+
+                    <p class="text-xs font-mono text-gray-400 italic">Expire dans {{pinValidationTimer()}} secondes</p>
+                    
+                    <button (click)="cancelPinRequest()" class="text-red-500 font-bold text-sm hover:underline">
+                        Annuler l'opération
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@if (selectedWithdrawal()) {
+    <div class="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-sm">
+        <div class="w-full max-w-lg h-full bg-surface-light dark:bg-surface-dark shadow-2xl animate-slide-in-right flex flex-col">
+            <div class="p-6 border-b flex justify-between items-center bg-gray-50 dark:bg-gray-800/20">
+                <h2 class="text-xl font-bold">Détails de la Transaction</h2>
+                <button (click)="selectedWithdrawal.set(null)" class="p-2 hover:bg-gray-200 rounded-full"><span class="material-icons-outlined">close</span></button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-8 space-y-8">
+                <div class="text-center">
+                    <span [class]="'px-4 py-1.5 rounded-full text-xs font-black uppercase ' + getStatusClass(selectedWithdrawal().status)">{{selectedWithdrawal().status}}</span>
+                    <h3 class="text-5xl font-black mt-6 tracking-tighter">{{selectedWithdrawal().amount}} <span class="text-xl text-gray-400">U</span></h3>
+                    <p class="text-gray-400 mt-2">ID Transaction: {{selectedWithdrawal().id}}</p>
+                </div>
+                <div class="space-y-4 pt-4">
+                    <div class="flex justify-between border-b border-dashed pb-3"><span class="text-gray-500">Bénéficiaire</span><span class="font-bold">{{selectedWithdrawal().vendor}}</span></div>
+                    <div class="flex justify-between border-b border-dashed pb-3"><span class="text-gray-500">Méthode de retrait</span><span class="font-bold">{{selectedWithdrawal().method}}</span></div>
+                    <div class="flex justify-between border-b border-dashed pb-3"><span class="text-gray-500">Coordonnées</span><span class="font-mono bg-gray-100 px-2 rounded">{{selectedWithdrawal().account}}</span></div>
+                    <div class="flex justify-between border-b border-dashed pb-3 text-red-500"><span class="font-medium">Frais déduits</span><span class="font-bold">-{{selectedWithdrawal().fee}} U</span></div>
+                </div>
+                <div class="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-2xl border border-blue-100 flex gap-3">
+                    <span class="material-icons-outlined text-blue-600">verified_user</span>
+                    <p class="text-xs text-blue-800">Vérification automatique : Le solde est suffisant et le compte n'a aucun litige en cours.</p>
+                </div>
+            </div>
+            <div class="p-6 border-t bg-gray-50 dark:bg-gray-800/20 flex gap-4">
+                <button (click)="selectedWithdrawal.set(null)" class="flex-1 py-3 font-bold text-gray-500 bg-white border border-gray-200 rounded-xl">Fermer</button>
+                <button class="flex-1 py-3 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20">Valider & Payer</button>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,38 @@
+<div class="p-6 space-y-6 bg-gray-50 min-h-screen">
+  @if(SelectedReport() == null){
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <app-kapi-card title="Signalements Actifs" value="8" icon="flag" accentColor="text-red-600"></app-kapi-card>
+      <app-kapi-card title="Taux de Pertinence" value="92%" icon="verified" accentColor="text-green-600"></app-kapi-card>
+      <app-kapi-card title="Traités ce jour" value="15" icon="done_all" accentColor="text-blue-600"></app-kapi-card>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl border border-gray-200 flex flex-wrap gap-4 items-end shadow-sm">
+      <div class="flex flex-col gap-1">
+        <label class="text-[10px] font-black text-gray-400 uppercase">Type de cible</label>
+        <select class="border rounded-lg px-3 py-2 text-sm outline-none">
+          <option>Tous</option>
+          <option>Utilisateur</option>
+          <option>Boutique</option>
+          <option>Produit/Avis</option>
+        </select>
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-[10px] font-black text-gray-400 uppercase">Sévérité</label>
+        <select class="border rounded-lg px-3 py-2 text-sm outline-none">
+          <option>Critique</option>
+          <option>Modérée</option>
+        </select>
+      </div>
+      <button class="bg-primary text-white px-6 py-2 rounded-lg text-sm font-bold ml-auto">Actualiser</button>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm">
+      <app-data-table 
+        [columns]="reportColumns" 
+        [data]="reports()" 
+        [actions]="reportActions">
+      </app-data-table>
+    </div>
+  }
+  <app-report-detail [report]="SelectedReport()" *ngIf="SelectedReport()" (onBack)="SelectedReport.set(null)"></app-report-detail>
+</div>

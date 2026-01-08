@@ -1,0 +1,54 @@
+<div class="p-6 space-y-6 animate-fade-in">
+  <header class="flex justify-between items-center">
+    <button (click)="onBack.emit()" class="text-gray-500 flex items-center gap-2">
+      <span class="material-icons-outlined">arrow_back</span> Retour aux litiges
+    </button>
+    <div class="flex gap-2">
+      <button class="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-sm font-bold">Geler les fonds</button>
+      <button class="bg-green-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg">Rembourser Client</button>
+    </div>
+  </header>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="space-y-6">
+      <div class="bg-white p-6 rounded-2xl border shadow-sm">
+        <h3 class="font-black text-xs uppercase text-gray-400 mb-4">Plaignant (Client)</h3>
+        <div class="flex items-center gap-3">
+          <div class="h-10 w-10 bg-gray-100 rounded-full"></div>
+          <div>
+            <p class="font-bold text-sm">Jean Dupont</p>
+            <p class="text-xs text-primary">Solde Wallet: 1,200 U</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white p-6 rounded-2xl border shadow-sm">
+        <h3 class="font-black text-xs uppercase text-gray-400 mb-4">Défendeur (Boutique)</h3>
+        <div class="flex items-center gap-3">
+          <div class="h-10 w-10 bg-orange-50 rounded-lg"></div>
+          <div>
+            <p class="font-bold text-sm">Electro Plus</p>
+            <p class="text-xs text-orange-600">Note: 4.2/5</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lg:col-span-2 bg-white rounded-2xl border shadow-sm flex flex-col h-[500px]">
+      <div class="p-4 border-b font-bold italic">Discussion d'arbitrage #TK-102</div>
+      <div class="flex-1 p-4 space-y-4 overflow-y-auto bg-gray-50/50">
+        <div class="bg-white p-3 rounded-xl border max-w-md">
+          <p class="text-[10px] font-bold text-primary uppercase">Client</p>
+          <p class="text-sm">Je n'ai jamais reçu mon colis alors que le livreur dit l'avoir déposé.</p>
+        </div>
+        <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100 max-w-md ml-auto text-right">
+          <p class="text-[10px] font-bold text-indigo-600 uppercase">Boutique</p>
+          <p class="text-sm text-indigo-900">Le livreur a fourni une photo de la remise en main propre.</p>
+        </div>
+      </div>
+      <div class="p-4 border-t flex gap-2">
+        <input type="text" placeholder="Intervenir en tant que modérateur..." class="flex-1 border rounded-xl px-4 text-sm outline-none">
+        <button class="bg-primary text-white p-2 rounded-xl"><span class="material-icons">send</span></button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,53 @@
+<div class="p-6 space-y-6 animate-in fade-in duration-500">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-black text-gray-800 tracking-tight text-red-600">JOURNAL D'AUDIT ADMIN</h1>
+            <p class="text-gray-500 font-medium italic text-xs">Historique immuable de toutes les actions administratives.</p>
+        </div>
+        <div class="flex gap-2">
+            <button class="flex items-center gap-2 px-4 py-2 bg-white border rounded-xl text-sm font-bold hover:bg-gray-50">
+                <span class="material-icons-outlined text-sm">download</span> Exporter CSV
+            </button>
+            <button class="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-xl text-sm font-bold">
+                <span class="material-icons-outlined text-sm">print</span> Imprimer
+            </button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+        <div class="space-y-1">
+            <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Rechercher un admin</label>
+            <div class="bg-gray-50 px-3 py-2 rounded-lg flex items-center gap-2">
+                <span class="material-icons-outlined text-sm text-gray-400">search</span>
+                <input type="text" placeholder="Nom ou Email..." class="bg-transparent border-none outline-none text-sm w-full">
+            </div>
+        </div>
+        
+        <div class="space-y-1">
+            <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Filtrer par Module</label>
+            <select class="w-full bg-gray-50 px-3 py-2 rounded-lg text-sm font-bold outline-none border-none">
+                @for (mod of modules; track mod) {
+                    <option [value]="mod">{{ mod }}</option>
+                }
+            </select>
+        </div>
+
+        <div class="space-y-1">
+            <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Date Début</label>
+            <input type="date" class="w-full bg-gray-50 px-3 py-2 rounded-lg text-sm outline-none border-none">
+        </div>
+
+        <div class="space-y-1">
+            <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Date Fin</label>
+            <input type="date" class="w-full bg-gray-50 px-3 py-2 rounded-lg text-sm outline-none border-none">
+        </div>
+    </div>
+
+    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm  ">
+        <div class="p-4 bg-red-50 text-red-800 text-[10px] font-black uppercase flex items-center gap-2">
+            <span class="material-icons-outlined text-sm">security</span>
+            Attention : Ces données sont auditables juridiquement et ne peuvent être supprimées.
+        </div>
+        <app-data-table [columns]="columns" [data]="auditLogs()"></app-data-table>
+    </div>
+</div>

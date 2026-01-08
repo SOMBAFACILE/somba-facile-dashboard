@@ -1,0 +1,13 @@
+<div [class]="'fixed z-[100] flex flex-col gap-3 p-4 transition-all duration-500 ' + getPositionClass()">
+    @for (toast of toastService.toasts(); track toast.id) {
+    <div 
+        [class]="'flex items-center p-4 rounded-lg shadow-lg border-l-4 min-w-[300px] animate-slide-in ' + getToastTheme(toast.type)"
+    >
+        <span class="material-icons-outlined mr-3">{{ toast.icon }}</span>
+        <div class="flex-1 text-sm font-medium">{{ toast.message }}</div>
+        <button (click)="toastService.remove(toast.id)" class="ml-4 opacity-70 hover:opacity-100">
+        <span class="material-icons-outlined text-sm">close</span>
+        </button>
+    </div>
+    }
+</div>

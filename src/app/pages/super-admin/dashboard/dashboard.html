@@ -1,0 +1,136 @@
+<div class="flex h-screen   bg-background-light dark:bg-background-dark">
+      
+    <app-sidebar></app-sidebar>
+
+    <div class="flex-1 flex flex-col h-full   relative">
+    <app-header></app-header>
+
+    <button (click)="saveData()">Enregistrer</button>
+    <button (click)="showError()">Erreur</button>
+    <button (click)="openAlert()">Alerte</button>
+
+    <main class="flex-1 overflow-y-auto p-6">
+        
+        <div class="p-6 space-y-6 bg-background-light dark:bg-background-dark min-h-screen">
+  
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <app-kapi-card 
+                title="Ventes Totales" 
+                [value]="totalSales().value" 
+                icon="payments" 
+                accentColor="text-indigo-600"
+                [stat]="{ value: '+12%', label: totalSales().label, isPositive: true }">
+                </app-kapi-card>
+
+                <app-kapi-card 
+                title="Utilisateurs" 
+                [value]="activeUsers().value" 
+                icon="people" 
+                accentColor="text-green-500"
+                [stat]="{ value: '+5.4%', label: activeUsers().label, isPositive: true }">
+                </app-kapi-card>
+
+                <app-kapi-card 
+                title="Taux de Rebond" 
+                [value]="bounceRate().value" 
+                icon="trending_down" 
+                accentColor="text-red-500"
+                [stat]="{ value: '+2.1%', label: bounceRate().label, isPositive: false }">
+                </app-kapi-card>
+
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-border-light dark:border-border-dark shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-bold text-lg text-text-light dark:text-text-dark">Activité Hebdomadaire</h3>
+                    <span class="material-icons-outlined text-text-muted-light cursor-pointer">more_vert</span>
+                </div>
+                
+                <div class="h-80">
+                    <app-base-chart 
+                    type="bar" 
+                    [data]="barChartData()" 
+                    [options]="chartOptions">
+                    </app-base-chart>
+                </div>
+                </div>
+
+                <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-border-light dark:border-border-dark shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-bold text-lg text-text-light dark:text-text-dark">Évolution des Revenus</h3>
+                    <span class="material-icons-outlined text-text-muted-light cursor-pointer">insights</span>
+                </div>
+
+                <div class="h-80">
+                    <app-base-chart 
+                    type="line" 
+                    [data]="lineChartData()" 
+                    [options]="chartOptions">
+                    </app-base-chart>
+                </div>
+                </div>
+
+            </div>
+
+            <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-border-light dark:border-border-dark">
+                <h3 class="text-lg font-bold mb-4 text-text-light dark:text-text-dark">
+                    Comparaison Dépôts vs Retraits
+                </h3>
+                
+                <div class="h-80">
+                    <app-base-chart 
+                    type="bar" 
+                    [data]="comparisonData()" 
+                    [options]="chartOptions">
+                    </app-base-chart>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8">
+            <h2 class="text-xl font-bold mb-4">Gestion des Utilisateurs</h2>
+            <app-data-table 
+            [columns]="userColumns" 
+            [data]="userData()" 
+            [actions]="userActions">
+            </app-data-table>
+        </div>
+
+        <div class="min-h-full w-full rounded-xl border-2 border-dashed border-border-light dark:border-border-dark flex flex-col items-center justify-center p-10 text-center relative   bg-surface-light dark:bg-surface-dark bg-opacity-50">
+            <div class="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style="background-image: linear-gradient(#4F46E5 1px, transparent 1px), linear-gradient(to right, #4F46E5 1px, transparent 1px); background-size: 20px 20px;"></div>
+            
+            <div class="z-10 max-w-lg">
+                <div class="mx-auto h-24 w-24 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center mb-6">
+                    <span class="material-icons-outlined text-5xl text-primary">dashboard_customize</span>
+                </div>
+                <h2 class="text-2xl font-bold text-text-light dark:text-text-dark mb-2">Welcome to your Dashboard</h2>
+                <p class="text-text-muted-light dark:text-text-muted-dark mb-8">
+                    Select an item from the sidebar to get started, or search for a module above. This area is ready for your content.
+                </p>
+                <div class="flex justify-center gap-4">
+                    <button class="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-md shadow-sm transition-colors duration-200 flex items-center">
+                    <span class="material-icons-outlined mr-2 text-sm">add</span>
+                    Create New Project
+                    </button>
+                    <button class="px-4 py-2 bg-white dark:bg-gray-700 border border-border-light dark:border-border-dark text-text-light dark:text-text-dark hover:bg-gray-50 dark:hover:bg-gray-600 rounded-md shadow-sm transition-colors duration-200">
+                    View Documentation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+    </div>
+    
+
+    @if (layoutService.isSidebarOpen()) {
+    <div 
+        (click)="layoutService.closeSidebar()"
+        class="fixed inset-0 bg-gray-900 bg-opacity-50 z-10 md:hidden transition-opacity duration-300"
+        aria-hidden="true"
+    ></div>
+    }
+</div>
+

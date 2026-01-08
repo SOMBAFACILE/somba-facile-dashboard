@@ -1,0 +1,90 @@
+<div class="flex-1 overflow-y-auto p-6 space-y-6">
+    <div class="flex justify-between items-end">
+        <div>
+            <h1 class="text-2xl font-bold">Recharges (Cash-In)</h1>
+            <p class="text-text-muted-light">Entrées de fonds et dépôts en espèces.</p>
+        </div>
+        <button (click)="showManualRechargeForm.set(true)" 
+                class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl font-bold flex items-center shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-all">
+            <span class="material-icons-outlined mr-2">add_card</span>
+            Dépôt Espèces (Agence)
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <app-kapi-card title="Volume 24h" [value]="stats().dailyVolume.value" icon="payments" accentColor="text-emerald-600" [stat]="{ value: '+8%', label: 'vs hier', isPositive: true }"></app-kapi-card>
+        <app-kapi-card title="Preuves en attente" [value]="stats().pendingCount.value" icon="inventory_2" accentColor="text-amber-500" [stat]="{ value: 'Urgent', label: 'à traiter', isPositive: false }"></app-kapi-card>
+        <app-kapi-card title="Caisse Agence" [value]="stats().agencyCash.value" icon="account_balance" accentColor="text-indigo-600" [stat]="{ value: 'Ok', label: 'Liquidité', isPositive: true }"></app-kapi-card>
+    </div>
+
+    <div class="bg-surface-light dark:bg-surface-dark p-4 rounded-xl border border-border-light flex justify-between items-center">
+        <div class="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+            <button (click)="currentFilter.set('all')" [class.bg-white]="currentFilter()==='all'" class="px-4 py-1.5 text-sm font-medium rounded-md shadow-sm transition-all">Tous</button>
+            <button (click)="currentFilter.set('pending')" [class.bg-white]="currentFilter()==='pending'" class="px-4 py-1.5 text-sm font-medium rounded-md shadow-sm transition-all">En attente</button>
+        </div>
+        <div class="relative w-64">
+            <span class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">search</span>
+            <input type="text" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" placeholder="Rechercher client..." class="w-full pl-10 pr-4 py-2 bg-background-light border border-border-light rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary/20">
+        </div>
+    </div>
+
+    <div class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light shadow-sm">
+        <app-data-table [columns]="columns" [data]="filteredRecharges()" [actions]="actions"></app-data-table>
+    </div>
+</div>
+
+@if (showManualRechargeForm()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    <div class="bg-surface-light dark:bg-surface-dark w-full max-w-md rounded-2xl shadow-2xl animate-in zoom-in duration-200">
+      <div class="p-6 border-b flex justify-between items-center bg-indigo-50 dark:bg-indigo-900/10">
+        <h2 class="text-xl font-bold text-indigo-600 flex items-center gap-2"><span class="material-icons-outlined">payments</span> Encaissement Agence</h2>
+        <button (click)="showManualRechargeForm.set(false)" class="text-gray-400 hover:text-gray-600"><span class="material-icons-outlined">close</span></button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div>
+          <label class="block text-sm font-bold text-gray-500 mb-1">IDENTIFIANT CLIENT</label>
+          <input type="text" [(ngModel)]="manualData().userIdentifier" placeholder="Email ou ID" class="w-full px-4 py-2 bg-background-light border border-border-light rounded-lg outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-bold text-gray-500 mb-1">MONTANT REÇU (U)</label>
+          <input type="number" [(ngModel)]="manualData().amount" class="w-full px-4 py-3 text-3xl font-black text-indigo-600 bg-background-light border border-border-light rounded-lg outline-none">
+        </div>
+      </div>
+      <div class="p-6 bg-gray-50 flex gap-3">
+        <button (click)="showManualRechargeForm.set(false)" class="flex-1 font-bold text-gray-400">Annuler</button>
+        <button (click)="handleManualRecharge()" class="flex-1 py-3 bg-indigo-600 text-white rounded-xl font-bold shadow-lg">Valider l'Encaissement</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (selectedRecharge()) {
+  <div class="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-sm">
+    <div class="w-full max-w-lg h-full bg-surface-light dark:bg-surface-dark shadow-2xl animate-slide-in-right flex flex-col">
+      <div class="p-6 border-b flex justify-between items-center bg-gray-50 dark:bg-gray-800/20">
+        <h2 class="text-xl font-bold">Vérification de Preuve</h2>
+        <button (click)="selectedRecharge.set(null)" class="p-2 hover:bg-gray-200 rounded-full"><span class="material-icons-outlined">close</span></button>
+      </div>
+      <div class="flex-1 overflow-y-auto p-8 space-y-6">
+        <div class="bg-emerald-50 p-6 rounded-2xl border border-emerald-100 text-center">
+          <p class="text-emerald-600 text-sm font-bold">Montant à créditer</p>
+          <h3 class="text-5xl font-black text-emerald-700 tracking-tighter">{{selectedRecharge().amount}} U</h3>
+        </div>
+        <div>
+          <h4 class="text-sm font-bold text-gray-400 mb-2">IMAGE DU REÇU CLIENT</h4>
+          <div class="rounded-xl border-4 border-white shadow-lg   bg-gray-100">
+            @if (selectedRecharge().proofUrl) {
+              <img [src]="selectedRecharge().proofUrl" class="w-full h-auto">
+            } @else {
+              <div class="p-20 text-center text-gray-300">Aucune preuve (Auto)</div>
+            }
+          </div>
+        </div>
+      </div>
+      <div class="p-6 border-t bg-gray-50 flex gap-4">
+        <button (click)="selectedRecharge.set(null)" class="flex-1 py-3 font-bold text-red-500 border border-red-200 bg-white rounded-xl">Preuve Invalide</button>
+        <button (click)="approveRecharge(selectedRecharge())" class="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-bold shadow-lg">Approuver & Créditer</button>
+      </div>
+    </div>
+  </div>
+}

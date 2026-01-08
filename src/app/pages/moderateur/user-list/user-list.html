@@ -1,0 +1,74 @@
+<div class="p-6 space-y-6 bg-gray-50 dark:bg-gray-900 min-h-screen relative">
+  
+  <div *ngIf="isLoading()" class="fixed inset-0 z-[1000] flex items-center justify-center bg-black/20 backdrop-blur-[2px]">
+    <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl flex flex-col items-center">
+      <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      <p class="mt-4 font-medium text-gray-700 dark:text-gray-200">Traitement en cours...</p>
+    </div>
+  </div>
+
+  @if(selectedUser() == null) {
+    <header class="flex justify-between items-center">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Gestion des Utilisateurs</h1>
+        <p class="text-gray-500">Filtrage et modération des comptes</p>
+      </div>
+      <button (click)="fetchUsers()" class="p-2 hover:bg-gray-200 rounded-full transition-colors">
+        <span class="material-icons-outlined text-gray-600">refresh</span>
+      </button>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      @for (kpi of kpis(); track kpi.label) {
+        <app-kapi-card 
+          [title]="kpi.label" 
+          [value]="kpi.value.toString()" 
+          [icon]="kpi.icon" 
+          [accentColor]="kpi.color">
+        </app-kapi-card>
+      }
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 shadow-sm flex flex-wrap items-center gap-4">
+      <div class="flex-1 min-w-[200px] relative">
+        <span class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+        <input type="text" (input)="searchTerm.set($any($event.target).value)"
+               placeholder="Rechercher..." class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary/20">
+      </div>
+
+      <div class="flex items-center gap-2">
+        <label class="text-xs font-bold text-gray-400">DE</label>
+        <input type="date" (change)="dateDebut.set($any($event.target).value)" class="px-3 py-2 border rounded-lg text-sm outline-none">
+        <label class="text-xs font-bold text-gray-400">À</label>
+        <input type="date" (change)="dateFin.set($any($event.target).value)" class="px-3 py-2 border rounded-lg text-sm outline-none">
+      </div>
+
+      <select (change)="statutFiltre.set($any($event.target).value)" class="px-3 py-2 border rounded-lg text-sm outline-none">
+        <option value="Tous">Tous les statuts</option>
+        <option value="Actif">Actif</option>
+        <option value="Bloqué">Bloqué</option>
+      </select>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      <app-data-table 
+        [columns]="userColumns" 
+        [data]="filteredUsers()" 
+        [actions]="userActions"
+        [itemsPerPage]="10">
+      </app-data-table>
+      
+      @if(filteredUsers().length === 0 && !isLoading()) {
+        <div class="p-10 text-center text-gray-500 italic">
+          Aucun utilisateur ne correspond à vos critères.
+        </div>
+      }
+    </div>
+
+  } @else {
+    <app-user-detail 
+      [user]="selectedUser()" 
+      (onBack)="selectedUser.set(null)">
+    </app-user-detail>
+  }
+</div>

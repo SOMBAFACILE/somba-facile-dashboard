@@ -1,0 +1,40 @@
+<div class="p-6 space-y-6">
+  <div class="flex justify-between items-center">
+    <h2 class="text-2xl font-black text-gray-800 uppercase">Gestion des Bannières</h2>
+    <button (click)="showModal.set(true)" class="bg-indigo-600 text-white px-5 py-3 rounded-2xl font-bold flex items-center gap-2 shadow-lg">
+      <span class="material-icons-outlined">add_photo_alternate</span> Nouvelle Campagne
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    @for (c of campaigns(); track c.id) {
+      <div class="bg-white rounded-[32px] border border-gray-100   shadow-sm hover:shadow-xl transition-all">
+        <div class="h-40 bg-gray-200 relative">
+          <div class="absolute top-4 left-4 px-3 py-1 bg-black/50 backdrop-blur-md text-white text-[10px] font-bold rounded-full uppercase">{{ c.status }}</div>
+          <div class="absolute inset-0 flex items-center justify-center text-gray-400">Aperçu Visuel</div>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="flex justify-between items-start">
+            <div>
+              <h3 class="font-black text-lg text-gray-800">{{ c.title }}</h3>
+              <p class="text-sm text-gray-500 font-medium">Boutique : {{ c.shop }}</p>
+            </div>
+            <button (click)="toggleCampaignStatus(c.id)" class="p-2 bg-gray-50 rounded-xl text-gray-400 hover:text-indigo-600">
+              <span class="material-icons-outlined">{{ c.status === 'Active' ? 'pause_circle' : 'play_circle' }}</span>
+            </button>
+          </div>
+          <div class="grid grid-cols-2 gap-4 pt-2">
+            <div class="bg-gray-50 p-3 rounded-2xl text-center">
+              <p class="text-[10px] font-bold text-gray-400 uppercase">Vues</p>
+              <p class="text-xl font-black">{{ c.views.toLocaleString() }}</p>
+            </div>
+            <div class="bg-indigo-50 p-3 rounded-2xl text-center">
+              <p class="text-[10px] font-bold text-indigo-400 uppercase">Clics (CTR)</p>
+              <p class="text-xl font-black text-indigo-600">{{ c.clicks.toLocaleString() }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

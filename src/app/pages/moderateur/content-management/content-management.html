@@ -1,0 +1,100 @@
+<div class="p-6 space-y-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
+  <div *ngIf="isLoading()" class="fixed inset-0 z-[1000] flex items-center justify-center bg-black/20 backdrop-blur-sm">
+    <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl flex flex-col items-center">
+      <div class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      <p class="mt-4 font-bold dark:text-white text-sm uppercase tracking-widest">Opération en cours</p>
+    </div>
+  </div>
+  @if(selectedProduct() === null){
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-black text-gray-800 dark:text-white uppercase tracking-tight">Gestion du Catalogue</h1>
+        <p class="text-gray-500 text-sm font-medium">Modération et contrôle qualité en temps réel.</p>
+      </div>
+      <button (click)="loadProducts()" class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border rounded-xl hover:shadow-md transition-all font-bold text-sm">
+        <span class="material-icons-outlined text-sm">refresh</span> Actualiser
+      </button>
+    </div>
+  
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      @for (k of kpis(); track k.label) {
+        <app-kapi-card 
+          [title]="k.label" 
+          [value]="k.value" 
+          [icon]="k.icon" 
+          [accentColor]="k.color"
+          [stat]="{ label: k.subValue, value: '', isPositive: true }">
+        </app-kapi-card>
+      }
+    </div>
+  
+    <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        
+        <div class="md:col-span-2 space-y-1.5">
+          <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Recherche</label>
+          <div class="relative">
+            <span class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+            <input 
+              type="text" 
+              [ngModel]="searchQuery()" 
+              (ngModelChange)="searchQuery.set($event)"
+              placeholder="Nom, boutique..." 
+              class="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-700 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/20">
+          </div>
+        </div>
+  
+        <div class="space-y-1.5">
+          <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Statut</label>
+          <select 
+            [ngModel]="statusFilter()" 
+            (ngModelChange)="statusFilter.set($event)"
+            class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700 border-none rounded-xl text-sm font-bold cursor-pointer">
+            <option value="Tous">Tous les statuts</option>
+            <option value="PUBLISHED">En ligne</option>
+            <option value="BLOCKED">Bloqués</option>
+            <option value="PENDING">En attente</option>
+          </select>
+        </div>
+  
+        <div class="space-y-1.5">
+          <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Catégorie (Dynamique)</label>
+          <select 
+            [ngModel]="categoryFilter()" 
+            (ngModelChange)="categoryFilter.set($event)"
+            class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700 border-none rounded-xl text-sm font-bold cursor-pointer">
+            @for (cat of categories(); track cat) {
+              <option [value]="cat">{{ cat }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+  
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden relative">
+      <app-data-table 
+        [columns]="productColumns" 
+        [data]="filteredProducts()" 
+        [actions]="productActions"
+        [itemsPerPage]="10"> </app-data-table>
+  
+      @if (!isLoading() && filteredProducts().length === 0) {
+        <div class="p-20 flex flex-col items-center justify-center text-center">
+          <span class="material-icons-outlined text-6xl text-gray-200 mb-4">inventory_2</span>
+          <p class="text-gray-500 font-medium">Aucun produit trouvé.</p>
+          <button (click)="searchQuery.set(''); statusFilter.set('Tous'); categoryFilter.set('Toutes')" class="mt-2 text-primary font-bold text-sm underline">Réinitialiser les filtres</button>
+        </div>
+      }
+    </div>
+  }
+
+  @if (selectedProduct()) {
+    <app-product-preview-modal 
+      [product]="selectedProduct()" 
+      (onClose)="selectedProduct.set(null)"
+      (onBlock)="handleBlock($event)"
+      (onUnblock)="handleUnblock($event)"
+      (onDelete)="handleDelete($event)">
+    </app-product-preview-modal>
+  }
+</div>

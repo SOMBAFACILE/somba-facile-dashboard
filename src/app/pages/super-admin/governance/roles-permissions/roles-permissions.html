@@ -1,0 +1,82 @@
+<div class="p-6 space-y-8 animate-in fade-in duration-500">
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-2xl font-black text-gray-800 tracking-tight">RÔLES & PERMISSIONS</h1>
+      <p class="text-gray-500 font-medium">Définissez les privilèges d'accès pour chaque groupe d'utilisateurs.</p>
+    </div>
+    <button class="bg-primary text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-primary/20 flex items-center gap-2">
+      <span class="material-icons-outlined">add_moderator</span>
+      Créer un Nouveau Rôle
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    
+    <div class="lg:col-span-1 space-y-3">
+      <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest px-2">Rôles Existants</h3>
+      <div class="space-y-2">
+        @for (role of roles(); track role.id) {
+          <button 
+            (click)="selectRole(role)"
+            [class]="selectedRoleId() === role.id ? 'bg-primary text-white shadow-indigo-100' : 'bg-white text-gray-600 hover:bg-gray-50 border-transparent'"
+            class="w-full flex items-center justify-between p-4 rounded-2xl border transition-all font-bold shadow-sm">
+            <span class="flex items-center gap-3">
+              <span class="material-icons-outlined text-sm">{{ role.icon }}</span>
+              {{ role.name }}
+            </span>
+            <span class="material-icons-outlined text-sm opacity-50">chevron_right</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="lg:col-span-3 space-y-6">
+      @if (selectedRole()) {
+        <div class="bg-white rounded-3xl border border-gray-100 shadow-sm  ">
+          <div class="p-6 border-b bg-gray-50/50 flex justify-between items-center">
+            <div>
+              <h2 class="text-xl font-black text-gray-800">Configuration : {{ selectedRole()?.name }}</h2>
+              <p class="text-xs text-gray-500">Modifiez les accès spécifiques pour ce groupe.</p>
+            </div>
+            <button class="px-6 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm hover:bg-emerald-700 transition-colors">
+              Enregistrer les modifications
+            </button>
+          </div>
+
+          <div class="p-6 space-y-8">
+            @for (group of permissionGroups(); track group.module) {
+              <div class="space-y-4">
+                <div class="flex items-center gap-2 border-b border-gray-100 pb-2">
+                  <span class="material-icons-outlined text-primary text-sm">{{ group.icon }}</span>
+                  <h4 class="font-black text-gray-700 uppercase text-xs tracking-tighter">{{ group.module }}</h4>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  @for (perm of group.actions; track perm.id) {
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-gray-100/80 transition-all border border-transparent hover:border-gray-200">
+                      <div>
+                        <p class="font-bold text-sm text-gray-800">{{ perm.name }}</p>
+                        <p class="text-[10px] text-gray-400">{{ perm.description }}</p>
+                      </div>
+                      
+                      <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" [checked]="perm.enabled" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                      </label>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      } @else {
+        <div class="h-64 flex flex-col items-center justify-center bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
+          <span class="material-icons-outlined text-4xl text-gray-300 mb-2">touch_app</span>
+          <p class="text-gray-400 font-medium text-sm">Sélectionnez un rôle à gauche pour modifier ses permissions.</p>
+        </div>
+      }
+    </div>
+
+  </div>
+</div>

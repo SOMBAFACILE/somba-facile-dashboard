@@ -1,0 +1,87 @@
+
+
+<div class="flex-1 p-6 space-y-6">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Audit Trail & Transactions</h1>
+        <button class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center">
+            <span class="material-icons-outlined mr-2">download</span> Exporter Rapport
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <app-kapi-card title="Solde Système" [value]="stats().netBalance.value" icon="account_balance_wallet" accentColor="text-primary"></app-kapi-card>
+        <app-kapi-card title="Flux Entrants" [value]="stats().totalIn.value" icon="arrow_downward" accentColor="text-emerald-600"></app-kapi-card>
+        <app-kapi-card title="Flux Sortants" [value]="stats().totalOut.value" icon="arrow_upward" accentColor="text-red-500"></app-kapi-card>
+    </div>
+
+    <div class="bg-surface-light dark:bg-surface-dark p-4 rounded-xl border border-border-light flex justify-between items-center">
+        <div class="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+            <button (click)="filterType.set('all')" [class.bg-white]="filterType()==='all'" class="px-4 py-1.5 text-xs font-bold rounded shadow-sm">Tout</button>
+            <button (click)="filterType.set('in')" [class.bg-white]="filterType()==='in'" class="px-4 py-1.5 text-xs font-bold rounded shadow-sm text-emerald-600">Entrées</button>
+            <button (click)="filterType.set('out')" [class.bg-white]="filterType()==='out'" class="px-4 py-1.5 text-xs font-bold rounded shadow-sm text-red-600">Sorties</button>
+        </div>
+        <input type="text" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" placeholder="Rechercher par ID ou Nom..." class="px-4 py-2 bg-background-light border border-border-light rounded-lg text-sm w-64 outline-none">
+    </div>
+
+    <div class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light shadow-sm ">
+        <app-data-table [columns]="columns" [data]="filteredLogs()" [actions]="actions"></app-data-table>
+    </div>
+</div>
+
+@if (selectedLog()) {
+    <div class="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm">
+        <div class="w-full max-w-md h-full bg-surface-light dark:bg-surface-dark shadow-2xl animate-slide-in-right flex flex-col">
+            
+            <div class="p-6 border-b flex justify-between items-center bg-gray-50 dark:bg-gray-800/20">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <span class="material-icons-outlined">shield</span> 
+                    Fiche d'audit
+                </h2>
+                <button (click)="selectedLog.set(null)" class="p-2 hover:bg-gray-200 rounded-full"><span class="material-icons-outlined">close</span></button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-6 space-y-6">
+                <div class="text-center p-6 bg-background-light dark:bg-background-dark rounded-2xl border-2 border-dashed border-border-light">
+                    <p class="text-sm text-text-muted-light mb-1">Montant Transactionnel</p>
+                    <h3 [class]="'text-4xl font-black ' + (selectedLog().category === 'in' ? 'text-emerald-600' : 'text-red-500')">
+                        {{selectedLog().amount}}
+                    </h3>
+                    <p class="text-xs text-gray-400 mt-2">ID: {{selectedLog().id}}</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-gray-400 uppercase">Acteur de l'opération</span>
+                        <span class="text-sm font-medium">{{selectedLog().actor}}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-gray-400 uppercase">Cible / Bénéficiaire</span>
+                        <span class="text-sm font-medium">{{selectedLog().target}}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-gray-400 uppercase">Moyen de transaction</span>
+                        <span class="text-sm font-medium">{{selectedLog().method}}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-gray-400 uppercase">IP Source & Localisation</span>
+                        <span class="text-sm font-mono text-blue-600 bg-blue-50 px-2 py-1 rounded w-fit">{{selectedLog().ipSource}}</span>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-xl">
+                    <span class="text-xs font-bold text-gray-400 uppercase block mb-2">Signature de Sécurité (Hash)</span>
+                    <span class="text-[10px] font-mono break-all text-gray-500">{{selectedLog().auditHash}}</span>
+                </div>
+
+                <div class="p-4 border-l-4 border-primary bg-primary-10">
+                    <span class="text-xs font-bold text-primary uppercase block">Note de l'administrateur</span>
+                    <p class="text-sm mt-1 italic">"{{selectedLog().note}}"</p>
+                </div>
+            </div>
+
+            <div class="p-6 border-t bg-gray-50 flex gap-4">
+                <button (click)="selectedLog.set(null)" class="flex-1 py-3 font-bold bg-white border border-gray-200 rounded-xl">Fermer</button>
+            </div>
+        </div>
+    </div>
+}

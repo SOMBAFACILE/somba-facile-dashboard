@@ -1,0 +1,51 @@
+<header class="h-16 bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark flex items-center justify-between px-4 sm:px-6 z-10">
+    
+    <div class="flex items-center flex-1">
+    <button (click)="layoutService.toggleSidebar()" class="md:hidden mr-4 p-2 rounded-md text-text-muted-light hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none">
+        <span class="material-icons-outlined">menu</span>
+    </button>
+
+    <div class="hidden md:flex items-center text-text-muted-light mr-4">
+        <span class="material-icons-outlined text-2xl cursor-pointer hover:text-primary transition-colors">menu</span>
+    </div>
+
+    <div class="relative w-full max-w-md">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <span class="material-icons-outlined text-text-muted-light">search</span>
+        </div>
+        <input class="block w-full pl-10 pr-3 py-2 border border-border-light dark:border-border-dark rounded-md leading-5 bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm transition duration-150" placeholder="Search..." type="text"/>
+    </div>
+    </div>
+
+    <div class="flex items-center space-x-4">
+    <button class="p-1 rounded-full text-text-muted-light hover:text-primary relative">
+        <span class="material-icons-outlined text-2xl">notifications</span>
+        <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-gray-800"></span>
+    </button>
+
+    <div class="relative">
+        <button (click)="toggleProfile()" class="flex items-center max-w-xs text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+        <div class="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white font-semibold">JD</div>
+        <span class="ml-2 hidden md:block text-sm font-medium text-text-light dark:text-text-dark">{{user.full_name}}</span>
+        <span class="material-icons-outlined ml-1 text-text-muted-light">expand_more</span>
+        </button>
+
+        @if (isProfileOpen()) {
+        <div class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-surface-light dark:bg-surface-dark ring-1 ring-black ring-opacity-5 z-50">
+            <div class="px-4 py-3 border-b border-border-light dark:border-border-dark">
+            <p class="text-sm text-text-light dark:text-text-dark">Signed in as</p>
+            <p class="text-sm font-medium text-text-light dark:text-text-dark truncate">{{user.username}}</p>
+            </div>
+            <a href="#" class="block px-4 py-2 text-sm text-text-muted-light hover:bg-gray-100 dark:hover:bg-gray-700">Your Profile</a>
+            <a href="#" class="block px-4 py-2 text-sm text-text-muted-light hover:bg-gray-100 dark:hover:bg-gray-700">Settings</a>
+            <button (click)="authService.logout()" class="w-full text-left flex items-center px-4 py-2 text-sm text-text-muted-light hover:bg-gray-100 dark:hover:bg-gray-700 border-t border-border-light dark:border-border-dark mt-1">
+                <span  class="material-icons-outlined text-sm mr-2">logout</span>
+                Sign out
+            </button>
+        </div>
+        
+        <div (click)="isProfileOpen.set(false)" class="fixed inset-0 z-40 cursor-default"></div>
+        }
+    </div>
+    </div>
+</header>

@@ -1,0 +1,108 @@
+<div class="p-6 space-y-8 animate-in fade-in duration-500">
+  
+  <div class="bg-gray-900 rounded-3xl p-8 text-white shadow-2xl relative  ">
+    <div class="relative z-10">
+      <h2 class="text-xl font-black mb-6 flex items-center gap-2">
+        <span class="material-icons-outlined">settings_input_component</span>
+        Configuration Financière Globale
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold text-gray-400 uppercase">Commission par Défaut (%)</label>
+          <input type="number" [(ngModel)]="globalSettings().defaultCommission" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-2xl font-black outline-none focus:border-primary">
+        </div>
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold text-gray-400 uppercase">Taxe de Plateforme (Unité)</label>
+          <input type="number" [(ngModel)]="globalSettings().platformTax" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-2xl font-black outline-none focus:border-primary">
+        </div>
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold text-gray-400 uppercase">Retrait Minimum</label>
+          <input type="number" [(ngModel)]="globalSettings().minWithdrawAmount" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-2xl font-black outline-none focus:border-primary">
+        </div>
+      </div>
+    </div>
+    <span class="material-icons-outlined absolute -right-10 -bottom-10 text-white/5 text-[200px]">payments</span>
+  </div>
+
+  <div class="space-y-4">
+    <div class="flex justify-between items-center px-2">
+        <h3 class="font-black text-gray-700 uppercase text-sm tracking-widest">Contrats par Boutique</h3>
+        <div class="flex gap-2">
+            <input type="text" placeholder="Rechercher une boutique..." class="text-xs border rounded-lg px-3 py-2 outline-none focus:border-primary">
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-4">
+      @for (c of contracts(); track c.id) {
+        <div class="bg-white border border-gray-100 p-6 rounded-3xl flex flex-wrap md:flex-nowrap items-center justify-between gap-6 hover:shadow-lg transition-all">
+          <div class="flex items-center gap-4 min-w-[200px]">
+            <div class="w-12 h-12 bg-primary/10 text-primary rounded-2xl flex items-center justify-center font-black">
+              {{ c.shopName.charAt(0) }}
+            </div>
+            <div>
+              <h4 class="font-black text-gray-800">{{ c.shopName }}</h4>
+              <span class="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-500 rounded-full font-bold uppercase">{{ c.status }}</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-8 text-center">
+            <div>
+              <p class="text-[10px] font-bold text-gray-400 uppercase">Commission</p>
+              <p class="text-lg font-black text-primary">{{ c.commissionRate }}%</p>
+            </div>
+            <div>
+              <p class="text-[10px] font-bold text-gray-400 uppercase">Fixe / Vente</p>
+              <p class="text-lg font-black text-gray-700">{{ c.fixedFee }} U</p>
+            </div>
+            <div>
+              <p class="text-[10px] font-bold text-gray-400 uppercase">Frais Retrait</p>
+              <p class="text-lg font-black text-gray-700">{{ c.withdrawFee }}%</p>
+            </div>
+          </div>
+
+          <button (click)="editContract(c)" class="p-3 bg-gray-50 text-gray-400 rounded-2xl hover:bg-primary hover:text-white transition-all">
+            <span class="material-icons-outlined">edit_note</span>
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+@if (editingContract()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4">
+    <div class="bg-white w-full max-w-lg rounded-[40px] shadow-2xl   animate-in zoom-in duration-300">
+      <div class="p-8 space-y-6">
+        <h3 class="text-2xl font-black text-gray-800">Modifier Contrat : {{ editingContract()?.shopName }}</h3>
+        
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-gray-400 uppercase">Taux Commission (%)</label>
+              <input type="number" [(ngModel)]="editingContract()!.commissionRate" class="w-full bg-gray-50 border-none rounded-2xl px-4 py-4 font-bold text-xl outline-none focus:ring-2 ring-primary/20">
+            </div>
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-gray-400 uppercase">Frais Fixe (U)</label>
+              <input type="number" [(ngModel)]="editingContract()!.fixedFee" class="w-full bg-gray-50 border-none rounded-2xl px-4 py-4 font-bold text-xl outline-none focus:ring-2 ring-primary/20">
+            </div>
+          </div>
+          
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-gray-400 uppercase">Type de contrat</label>
+            <select [(ngModel)]="editingContract()!.status" class="w-full bg-gray-50 border-none rounded-2xl px-4 py-4 font-bold outline-none focus:ring-2 ring-primary/20">
+              <option value="Standard">Standard</option>
+              <option value="Premium">Premium (Partenaire)</option>
+              <option value="Négocié">Négocié (Spécial)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex gap-4 pt-4">
+          <button (click)="editingContract.set(null)" class="flex-1 py-4 font-bold text-gray-400 hover:bg-gray-50 rounded-2xl transition-all">Annuler</button>
+          <button (click)="saveContract()" class="flex-1 py-4 bg-primary text-white font-black rounded-2xl shadow-lg shadow-primary/30">Appliquer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

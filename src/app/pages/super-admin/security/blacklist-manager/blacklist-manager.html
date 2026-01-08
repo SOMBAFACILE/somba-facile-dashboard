@@ -1,0 +1,36 @@
+<div class="p-6 space-y-6">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-black text-gray-800 uppercase">Liste Noire (Bannissements)</h2>
+    <button class="bg-red-600 text-white px-5 py-3 rounded-2xl font-bold flex items-center gap-2">
+      <span class="material-icons-outlined">person_off</span> Bannir un identifiant
+    </button>
+  </div>
+
+  <div class="bg-white rounded-[32px] border border-gray-100   shadow-sm">
+    <table class="w-full text-left">
+      <thead class="bg-gray-50 border-b">
+        <tr>
+          <th class="p-5 text-xs font-black text-gray-400 uppercase">Cible</th>
+          <th class="p-5 text-xs font-black text-gray-400 uppercase">Raison</th>
+          <th class="p-5 text-xs font-black text-gray-400 uppercase">Date</th>
+          <th class="p-5 text-xs font-black text-gray-400 uppercase">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (b of bannedItems(); track b.target) {
+          <tr class="border-b last:border-0">
+            <td class="p-5">
+              <p class="font-black text-gray-800">{{ b.target }}</p>
+              <span class="text-[10px] px-2 py-0.5 bg-gray-100 rounded-full font-bold">{{ b.type }}</span>
+            </td>
+            <td class="p-5 text-sm font-medium text-gray-500">{{ b.reason }}</td>
+            <td class="p-5 text-sm text-gray-400">{{ b.date }}</td>
+            <td class="p-5">
+              <button class="text-emerald-600 font-bold text-xs hover:underline">RÉHABILITER</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

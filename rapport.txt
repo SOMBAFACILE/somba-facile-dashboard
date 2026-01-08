@@ -1,0 +1,66 @@
+📑 RAPPORT DE CONCEPTION TECHNIQUE : PLATEFORME "SOMBA-FACILE"
+1. VISION ET OBJECTIFS DU PROJET
+
+Somba-Facile se positionne comme une marketplace hybride visant à simplifier l'accès aux produits pour les consommateurs tout en offrant une gestion professionnelle aux marchands. La structure logicielle repose sur une hiérarchie de contrôle stricte pour garantir la confiance et la sécurité des transactions.
+2. ÉCOSYSTÈME DES ESPACES DÉVELOPPÉS
+🛡️ ESPACE SUPER ADMIN (Gouvernance Suprême)
+
+C'est le centre de commandement de Somba-Facile. Nous avons finalisé :
+
+    Tableau de Bord Suprême : Monitoring en temps réel du chiffre d'affaires (commissions), de la santé du serveur et de l'activité des utilisateurs.
+
+    Gestion de l'Équipe (Staff) : Attribution de rôles précis (Comptable, Support, Modérateur) avec une matrice de permissions dynamique.
+
+    Contrôle Financier (Contrats & Frais) : Paramétrage des taux de commission par boutique, frais de retrait et seuils de paiement.
+
+    Régie Publicitaire : Gestion autonome des bannières promotionnelles et des produits sponsorisés pour la monétisation.
+
+    Module de Haute Sécurité : Whitelist d'IP pour les admins, détection de fraude transactionnelle et gestion de la liste noire (Blacklist).
+
+⚖️ ESPACE MODÉRATION (Contrôle Qualité)
+
+Le rôle de cet espace est de garantir l'intégrité de Somba-Facile :
+
+    Validation KYC : Examen des documents légaux des marchands avant ouverture.
+
+    Modération de Contenu : Approbation manuelle ou automatique des fiches produits et filtrage des avis clients.
+
+    Gestion des Litiges : Interface de résolution de conflits entre acheteurs et vendeurs.
+
+3. SYNTHÈSE DES RÉALISATIONS TECHNIQUES
+💻 Architecture Frontend
+
+    Framework : Angular 17+ (Standalone Components).
+
+    Réactivité : Utilisation intensive des Signals pour une synchronisation fluide des données sans surcharge de performance.
+
+    Navigation : Système de Sidebar hiérarchique piloté par des métadonnées, permettant une extension facile de nouveaux modules.
+
+🛠️ Composants Core de Somba-Facile
+Composant	Description Technique
+Matrice de Permissions	Logique immuable permettant d'activer/désactiver des droits par module.
+Moteur de Push	Console de diffusion avec aperçu en temps réel (Mockup mobile intégré).
+Audit Log System	Journalisation immuable de chaque action administrative (Traçabilité totale).
+Maintenance Switch	Interrupteur global avec gestion de message personnalisé pour les utilisateurs.
+4. MODÈLE ÉCONOMIQUE & SÉCURITÉ
+💰 Flux Financiers
+
+Le système de commissionnement de Somba-Facile est désormais capable de gérer :
+
+    Commissions Variables : Adaptées selon le type de contrat (Standard, Premium, Négocié).
+
+    Frais Fixes : Prélèvement à la vente pour couvrir les frais de plateforme.
+
+    Frais de Retrait : Pourcentage appliqué lors de la récupération des fonds par les marchands.
+
+🔒 Sécurité du Système
+
+    Protection contre l'usurpation : Chaque connexion admin est trackée par IP.
+
+    Intégrité des données : Les logs d'audit ne sont ni modifiables ni supprimables par le personnel.
+
+    Contrôle des Versions : Gestion forcée des mises à jour des applications iOS et Android.
+
+🚀 CONCLUSION ET ÉTAT DE PRÊT
+
+La plateforme Somba-Facile dispose aujourd'hui d'une infrastructure administrative complète, prête pour l'intégration des API Backend. Le design respecte les codes du e-commerce moderne : épuré, rapide et orienté utilisateur.

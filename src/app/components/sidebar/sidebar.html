@@ -1,0 +1,167 @@
+<aside 
+  class="w-64 bg-surface-light dark:bg-surface-dark border-r border-border-light dark:border-border-dark flex-shrink-0 flex flex-col transition-all duration-300 transform md:relative absolute z-20 h-full"
+  [class.-translate-x-full]="!layoutService.isSidebarOpen()"
+  [class.md:translate-x-0]="true"
+>
+  <div class="h-16 flex items-center justify-center border-b border-border-light dark:border-border-dark px-6">
+    <div class="flex items-center gap-2 font-bold text-xl text-green-700 dark:text-green-400">
+        <img src="./logos/logo_square.png" class="w-[65.5px]" alt="logo somba-facile" srcset="">
+      <!-- <span class="material-icons-outlined text-3xl">dashboard</span> -->
+        <span class="uppercase">somba-facile</span>
+    </div>
+  </div>
+
+  <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+    @if(IsModerator()) {
+        <h3 class="text-lg text-gray-700 dark:text-gray-300 uppercase my-4">module Moderateur</h3>
+        @for(item of menuModerateurItems(); track item.label) {
+            @if (item.children) {
+                <div class="pt-2">
+                <button 
+                    (click)="toggleMenu(item.id)" 
+                    class="w-full flex items-center justify-between px-3 py-2 text-sm font-medium text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md group focus:outline-none"
+                >
+                    <div class="flex items-center">
+                    <span class="material-icons-outlined mr-3 text-lg">{{ item.icon }}</span>
+                    {{ item.label }}
+                    </div>
+                    <span 
+                    class="material-icons-outlined text-sm transform transition-transform duration-200"
+                    [class.rotate-90]="isOpen(item.id)">
+                    chevron_right
+                    </span>
+                </button>
+                
+                @if (isOpen(item.id)) {
+                    <div class="mt-1 space-y-1 pl-11">
+                    @for (subItem of item.children; track subItem.label) {
+                        
+                        <a 
+                        [href]="subItem.route" 
+                        class="block px-3 py-2 text-sm font-medium text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-md"
+                        >
+                        {{ subItem.label }}
+                        </a>
+                    }
+                    </div>
+                }
+                </div>
+            } 
+            
+            @else {
+                <a 
+                [href]="item.route" 
+                class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                [class.bg-primary-10]="false" 
+                > 
+                <span class="material-icons-outlined mr-3 text-lg">{{ item.icon }}</span>
+                {{ item.label }}
+                </a>
+            }
+        }
+    }
+    @if( IsFinanceModerator()) {
+        <h3 class="text-lg text-gray-700 dark:text-gray-300 uppercase my-4">module Finance</h3>
+        @for(item of menuFinanceItems(); track item.label) {
+            @if (item.children) {
+                <div class="pt-2">
+                <button 
+                    (click)="toggleMenu(item.id)" 
+                    class="w-full flex items-center justify-between px-3 py-2 text-sm font-medium text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md group focus:outline-none"
+                >
+                    <div class="flex items-center">
+                    <span class="material-icons-outlined mr-3 text-lg">{{ item.icon }}</span>
+                    {{ item.label }}
+                    </div>
+                    <span 
+                    class="material-icons-outlined text-sm transform transition-transform duration-200"
+                    [class.rotate-90]="isOpen(item.id)">
+                    chevron_right
+                    </span>
+                </button>
+                
+                @if (isOpen(item.id)) {
+                    <div class="mt-1 space-y-1 pl-11">
+                    @for (subItem of item.children; track subItem.label) {
+                        
+                        <a 
+                        [href]="subItem.route" 
+                        class="block px-3 py-2 text-sm font-medium text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-md"
+                        >
+                        {{ subItem.label }}
+                        </a>
+                    }
+                    </div>
+                }
+                </div>
+            } 
+            
+            @else {
+                <a 
+                [href]="item.route" 
+                class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                [class.bg-primary-10]="false" 
+                > 
+                <span class="material-icons-outlined mr-3 text-lg">{{ item.icon }}</span>
+                {{ item.label }}
+                </a>
+            }
+        }
+      }
+    @if(IsSuperAdmin()) {
+        <h3 class="text-lg text-gray-700 dark:text-gray-300 uppercase my-4">module Super admin</h3>
+        @for(item of menuSuperAdminItems(); track item.label) {
+            @if (item.children) {
+                <div class="pt-2">
+                <button 
+                    (click)="toggleMenu(item.id)" 
+                    class="w-full flex items-center justify-between px-3 py-2 text-sm font-medium text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md group focus:outline-none"
+                >
+                    <div class="flex items-center">
+                    <span class="material-icons-outlined mr-3 text-lg">{{ item.icon }}</span>
+                    {{ item.label }}
+                    </div>
+                    <span 
+                    class="material-icons-outlined text-sm transform transition-transform duration-200"
+                    [class.rotate-90]="isOpen(item.id)">
+                    chevron_right
+                    </span>
+                </button>
+                
+                @if (isOpen(item.id)) {
+                    <div class="mt-1 space-y-1 pl-11">
+                    @for (subItem of item.children; track subItem.label) {
+                        
+                        <a 
+                        [href]="subItem.route" 
+                        class="block px-3 py-2 text-sm font-medium text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-md"
+                        >
+                        {{ subItem.label }}
+                        </a>
+                    }
+                    </div>
+                }
+                </div>
+            } 
+            
+            @else {
+                <a 
+                [href]="item.route" 
+                class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                [class.bg-primary-10]="false" 
+                > 
+                <span class="material-icons-outlined mr-3 text-lg">{{ item.icon }}</span>
+                {{ item.label }}
+                </a>
+            }
+        }
+    }
+  </nav>
+
+  <div class="border-t border-border-light dark:border-border-dark p-4">
+    <a (click)="authService.logout()" class="flex items-center px-3 py-2 text-sm font-medium text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors">
+      <span class="material-icons-outlined mr-3 text-lg">logout</span>
+      Logout
+    </a>
+  </div>
+</aside>

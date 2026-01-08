@@ -1,0 +1,132 @@
+<div class="p-6 space-y-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
+  
+  <div *ngIf="isLoading()" class="fixed inset-0 z-[1000] flex items-center justify-center bg-black/20 backdrop-blur-sm">
+    <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl flex flex-col items-center">
+      <div class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      <p class="mt-4 font-bold dark:text-white text-sm uppercase tracking-widest">Opération en cours</p>
+    </div>
+  </div>
+
+  <ng-container *ngIf="viewMode() === 'list'">
+    <header class="flex justify-between items-center mb-6">
+      <div>
+        <h1 class="text-2xl font-black text-gray-800 dark:text-white uppercase">Gestion Marketplace</h1>
+        <p class="text-gray-500">Supervision des vendeurs et validation des accès</p>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <app-kapi-card *ngFor="let kpi of kpis()" 
+        [title]="kpi.label" [value]="kpi.value" [icon]="kpi.icon" [accentColor]="kpi.color">
+      </app-kapi-card>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border flex flex-wrap gap-4 items-center shadow-sm">
+      <div class="relative flex-1">
+        <span class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+        <input type="text" (input)="searchTerm.set($any($event.target).value)" 
+          placeholder="Rechercher une boutique ou un gérant..." 
+          class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary/20 bg-gray-50 dark:bg-gray-700/30">
+      </div>
+      
+      <select (change)="statusFilter.set($any($event.target).value)" class="px-4 py-2 border rounded-lg text-sm outline-none bg-white dark:bg-gray-700">
+        <option value="Tous">Tous les statuts</option>
+        <option value="PENDING">Candidatures (En attente)</option>
+        <option value="APPROVED">Boutiques Actives</option>
+        <option value="REJECTED">Refusées / Suspendues</option>
+      </select>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-xl border shadow-sm overflow-hidden">
+      <app-data-table [columns]="vendorColumns" [data]="filteredVendors()" [actions]="vendorActions"></app-data-table>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="viewMode() === 'folder'">
+    <div class="max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-300">
+      <button (click)="closeView()" class="flex items-center text-primary font-bold mb-6 hover:translate-x-[-4px] transition-transform">
+        <span class="material-icons-outlined mr-2">arrow_back</span> Retour à la liste
+      </button>
+
+      <div class="bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border shadow-xl">
+        <div class="p-8 bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 border-b flex justify-between items-center">
+            <div class="flex items-center gap-6">
+                <img [src]="selectedVendor().logo || 'assets/default-logo.png'" class="w-24 h-24 rounded-2xl border-2 border-white shadow-lg object-cover">
+                <div>
+                  <h2 class="text-3xl font-black text-gray-800 dark:text-white">{{ selectedVendor().name }}</h2>
+                  <p class="text-gray-500 font-medium">Demande déposée le {{ selectedVendor().createdAt | date:'longDate' }}</p>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <button (click)="processValidation('reject')" class="px-6 py-2 bg-red-50 text-red-600 rounded-xl font-bold hover:bg-red-100 transition-colors">Rejeter</button>
+                <button (click)="processValidation('approve')" class="px-6 py-2 bg-green-600 text-white rounded-xl font-bold shadow-lg shadow-green-200 hover:bg-green-700">Approuver l'accès</button>
+            </div>
+        </div>
+
+        <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div class="space-y-6">
+                <h3 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em]">Dossier Juridique</h3>
+                <div class="grid gap-4">
+                    <div (click)="viewDoc(selectedVendor().documentRccm)" class="group p-5 border-2 border-dashed rounded-2xl flex items-center justify-between cursor-pointer hover:border-primary hover:bg-primary/5 transition-all">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center group-hover:bg-primary group-hover:text-white">
+                                <span class="material-icons-outlined">gavel</span>
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-800 dark:text-white text-sm">Registre du Commerce (RCCM)</p>
+                                <p class="text-xs text-gray-400 uppercase font-bold">Vérifier l'authenticité</p>
+                            </div>
+                        </div>
+                        <span class="material-icons-outlined text-gray-300">open_in_new</span>
+                    </div>
+
+                    <div (click)="viewDoc(selectedVendor().documentIdentity)" class="group p-5 border-2 border-dashed rounded-2xl flex items-center justify-between cursor-pointer hover:border-primary hover:bg-primary/5 transition-all">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center group-hover:bg-primary group-hover:text-white">
+                                <span class="material-icons-outlined">badge</span>
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-800 dark:text-white text-sm">ID du Gérant</p>
+                                <p class="text-xs text-gray-400 uppercase font-bold">CNI ou Passeport</p>
+                            </div>
+                        </div>
+                        <span class="material-icons-outlined text-gray-300">open_in_new</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <h3 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em]">Contact & Localisation</h3>
+                <div class="bg-gray-50 dark:bg-gray-700/30 p-6 rounded-2xl space-y-4">
+                    <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-600 pb-3">
+                        <span class="text-sm text-gray-500 font-medium">Gérant</span>
+                        <span class="font-bold text-gray-800 dark:text-white">{{ selectedVendor().ownerFullName }}</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-600 pb-3">
+                        <span class="text-sm text-gray-500 font-medium">Email</span>
+                        <span class="font-bold text-gray-800 dark:text-white">{{ selectedVendor().email }}</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-600 pb-3">
+                        <span class="text-sm text-gray-500 font-medium">Téléphone</span>
+                        <span class="font-bold text-gray-800 dark:text-white">{{ selectedVendor().phoneNumber }}</span>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-sm text-gray-500 font-medium">Adresse Physique</span>
+                        <span class="font-bold text-gray-800 dark:text-white">{{ selectedVendor().address }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+    <ng-container *ngIf="viewMode() === 'profile'">
+        <app-vendor-detail 
+            *ngIf = "selectedVendorData()"
+            [vendor]="selectedVendorData()" 
+            (onBack)="backFromProfil()">
+        </app-vendor-detail>
+    </ng-container>
+
+</div>

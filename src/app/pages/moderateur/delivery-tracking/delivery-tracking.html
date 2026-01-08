@@ -1,0 +1,43 @@
+<div class="p-6 space-y-6 bg-gray-50 min-h-screen">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <app-kapi-card *ngFor="let k of kpis" 
+      [title]="k.label" 
+      [value]="k.value" 
+      [icon]="k.icon" 
+      [accentColor]="k.color">
+    </app-kapi-card>
+  </div>
+
+  <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-wrap gap-4 items-end">
+    <div class="flex flex-col gap-1">
+      <label class="text-[10px] font-black uppercase text-gray-400">Zone</label>
+      <select class="border rounded-lg px-3 py-2 text-sm outline-none">
+        <option>Toutes les zones</option>
+        <option>Centre-ville</option>
+        <option>Périphérie</option>
+      </select>
+    </div>
+    <div class="flex flex-col gap-1">
+      <label class="text-[10px] font-black uppercase text-gray-400">Livreur</label>
+      <input type="text" placeholder="Nom du livreur..." class="border rounded-lg px-3 py-2 text-sm outline-none">
+    </div>
+    <div class="flex flex-col gap-1">
+      <label class="text-[10px] font-black uppercase text-gray-400">Urgence</label>
+      <select class="border rounded-lg px-3 py-2 text-sm outline-none">
+        <option>Normal</option>
+        <option class="text-red-600 font-bold">Retards uniquement</option>
+      </select>
+    </div>
+    <button class="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-bold ml-auto hover:bg-blue-700 transition-all">
+      Filtrer les livraisons
+    </button>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm">
+    <app-data-table 
+      [columns]="deliveryColumns" 
+      [data]="deliveries()" 
+      [actions]="deliveryActions">
+    </app-data-table>
+  </div>
+</div>

@@ -1,0 +1,42 @@
+<div class="p-6 space-y-8 animate-in slide-in-from-bottom-4 duration-500">
+  <div class="flex justify-between items-start">
+    <div>
+      <h2 class="text-2xl font-black text-gray-800 uppercase flex items-center gap-2">
+        <span class="material-icons-outlined text-blue-600">lan</span> Contrôle d'Accès Réseau
+      </h2>
+      <p class="text-sm text-gray-500">Gérez les adresses IP autorisées à accéder au Dashboard Admin.</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="bg-white rounded-[32px] border border-gray-100 p-6 shadow-sm">
+      <h3 class="font-black text-gray-400 text-xs uppercase mb-6 tracking-widest">Whitelist (Accès autorisés)</h3>
+      <div class="space-y-3">
+        @for (item of whitelistedIps(); track item.ip) {
+          <div class="flex items-center justify-between p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+            <div>
+              <p class="font-black text-emerald-800">{{ item.ip }}</p>
+              <p class="text-[10px] font-bold text-emerald-600 uppercase">{{ item.label }}</p>
+            </div>
+            <button class="text-emerald-300 hover:text-red-500"><span class="material-icons-outlined">delete</span></button>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="bg-red-50 rounded-[32px] border border-red-100 p-6 shadow-sm">
+      <h3 class="font-black text-red-400 text-xs uppercase mb-6 tracking-widest">Tentatives Suspectes (Dernières 24h)</h3>
+      <div class="space-y-3">
+        @for (attempt of suspiciousAttempts(); track attempt.ip) {
+          <div class="flex items-center justify-between p-4 bg-white rounded-2xl border border-red-100 shadow-sm">
+            <div>
+              <p class="font-black text-gray-800">{{ attempt.ip }} <span class="text-[10px] font-medium text-gray-400">({{ attempt.location }})</span></p>
+              <p class="text-[10px] font-bold text-red-500 uppercase">{{ attempt.attempts }} échecs de connexion</p>
+            </div>
+            <button (click)="blockIp(attempt.ip)" class="bg-red-600 text-white px-3 py-2 rounded-xl text-xs font-black">BLOQUER</button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

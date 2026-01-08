@@ -1,0 +1,120 @@
+<div class="p-6 space-y-6 animate-fade-in bg-gray-50 min-h-screen">
+  
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <button (click)="onBack.emit()" class="p-2 hover:bg-white rounded-full transition-all border border-transparent hover:border-gray-200">
+        <span class="material-icons-outlined">arrow_back</span>
+      </button>
+      <div>
+        <h1 class="text-xl font-black flex items-center gap-2">
+          Commande {{ order().id }} 
+          <span class="px-3 py-1 bg-green-100 text-green-700 text-[10px] rounded-full uppercase">Paiement Validé</span>
+        </h1>
+        <p class="text-sm text-gray-400 font-medium">Effectuée le {{ order().date }}</p>
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <button class="px-4 py-2 border border-red-200 text-red-600 rounded-xl text-sm font-bold hover:bg-red-50 transition-all">
+        Signaler un problème
+      </button>
+      <button class="px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20">
+        Imprimer le reçu
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <div class="lg:col-span-8 space-y-6">
+      
+      <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="p-3 bg-indigo-50 text-indigo-600 rounded-2xl font-black">
+            <span class="material-icons-outlined">account_balance_wallet</span>
+          </div>
+          <div>
+            <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">Transaction Interne</p>
+            <p class="text-lg font-bold text-gray-800">{{ order().amount }} U déduit du Wallet Client</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <p class="text-xs text-gray-400">Commission Plateforme (10%)</p>
+          <p class="font-bold text-red-500">- 465 U</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm  ">
+        <div class="p-4 border-b bg-gray-50/50">
+          <h3 class="font-bold text-sm uppercase tracking-wider text-gray-500">Panier de la commande</h3>
+        </div>
+        <div class="divide-y divide-gray-100">
+          @for (item of items(); track item.name) {
+            <div class="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+              <div class="flex items-center gap-4">
+                <img [src]="item.image" class="h-12 w-12 rounded-lg object-cover bg-gray-100">
+                <div>
+                  <p class="font-bold text-sm">{{ item.name }}</p>
+                  <p class="text-xs text-primary font-medium">Boutique : {{ item.vendor }}</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="font-bold">{{ item.price }} U</p>
+                <p class="text-xs text-gray-400">Qté: {{ item.qty }}</p>
+              </div>
+            </div>
+          }
+        </div>
+        <div class="p-6 bg-gray-50/50 border-t flex justify-between items-center">
+          <span class="font-black text-gray-400 uppercase">Total payé</span>
+          <span class="text-2xl font-black text-primary">{{ order().amount }} U</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lg:col-span-4 space-y-6">
+      
+      <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+        <h3 class="font-bold mb-6 flex items-center gap-2">
+          <span class="material-icons-outlined text-blue-600">local_shipping</span>
+          Suivi en temps réel
+        </h3>
+        
+        <div class="relative space-y-8">
+          @for (step of timeline(); track step.status; let i = $index) {
+            <div class="flex gap-4">
+              <div class="relative flex flex-col items-center">
+                <div [class]="step.done ? 'bg-green-500' : 'bg-gray-200'" class="z-10 h-5 w-5 rounded-full flex items-center justify-center border-4 border-white shadow-sm">
+                  @if (step.done) { <span class="material-icons text-[10px] text-white">check</span> }
+                </div>
+                @if (i < timeline().length - 1) {
+                  <div [class]="step.done ? 'bg-green-200' : 'bg-gray-100'" class="absolute top-5 w-[2px] h-full"></div>
+                }
+              </div>
+              <div>
+                <p [class]="step.done ? 'text-gray-900 font-bold' : 'text-gray-400 font-medium'" class="text-sm">
+                  {{ step.status }}
+                </p>
+                <p class="text-[10px] text-gray-400">{{ step.date }}</p>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="bg-indigo-600 p-6 rounded-2xl text-white shadow-xl shadow-indigo-100">
+        <p class="text-[10px] font-black uppercase opacity-60 tracking-widest mb-4">Livreur Assigné</p>
+        <div class="flex items-center gap-4">
+          <div class="h-12 w-12 bg-white/20 rounded-full flex items-center justify-center font-bold">MK</div>
+          <div>
+            <p class="font-bold">Moussa Konaté</p>
+            <p class="text-xs opacity-80">+242 06 000 00 00</p>
+          </div>
+          <button class="ml-auto p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-all">
+            <span class="material-icons-outlined">call</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
